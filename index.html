@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Кто хочет стать миллионером</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app">
+    <header class="header">
+      <h1>Кто хочет стать миллионером</h1>
+      <p class="subtitle">Ответьте на 15 вопросов и выиграйте 1 000 000 ₽</p>
+    </header>
+
+    <section class="layout">
+      <aside class="money-ladder" aria-label="Таблица выигрышей">
+        <h2>Суммы</h2>
+        <ol id="money-list"></ol>
+      </aside>
+
+      <section class="game-card">
+        <div class="status-panel">
+          <span id="status-text">Нажмите «Начать игру»</span>
+          <button id="take-money-btn" class="secondary" disabled>Забрать деньги</button>
+        </div>
+
+        <div id="question-box" class="question-box">
+          <p id="question-text">Готовы проверить знания?</p>
+        </div>
+
+        <div id="answers" class="answers-grid"></div>
+
+        <div class="hints">
+          <button id="hint-5050" class="hint-btn">50:50</button>
+          <button id="hint-audience" class="hint-btn">Помощь зала</button>
+          <button id="hint-call" class="hint-btn">Звонок другу</button>
+        </div>
+
+        <div id="hint-result" class="hint-result" aria-live="polite"></div>
+        <button id="start-btn" class="primary">Начать игру</button>
+      </section>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
