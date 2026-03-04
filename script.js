@@ -120,15 +120,19 @@ const audioMap = {
   hint5050: "audio/khsm_50-50.mp3",
   hintAudience: "audio/hint-audience.mp3",
   hintCall: "audio/hint-call.mp3",
-  gameWin: "audio/game-win.mp3",
+  gameWin: "audio/total-winnings-strap.mp3",
   gameLose: "audio/answer-wrong.mp3",
-  readyStart: "audio/hello-new-punter-2008-long.mp3"
+  readyStart: "audio/hello-new-punter-2008-long.mp3",
+  thinking: "audio/thinking.mp3"
 };
 
 const audioPlayers = {};
 const audioStopTimers = {};
 const audioStopAfterMs = {
   gameStart: 4000
+};
+const audioLoop = {
+  thinking: true
 };
 
 function playSound(eventName) {
@@ -143,6 +147,7 @@ function playSound(eventName) {
   }
 
   const player = audioPlayers[eventName];
+  player.loop = Boolean(audioLoop[eventName]);
   clearTimeout(audioStopTimers[eventName]);
   player.currentTime = 0;
   player.play().catch(() => {
@@ -156,6 +161,16 @@ function playSound(eventName) {
       player.currentTime = 0;
     }, stopAfterMs);
   }
+}
+
+function stopSound(eventName) {
+  const player = audioPlayers[eventName];
+  if (!player) {
+    return;
+  }
+  clearTimeout(audioStopTimers[eventName]);
+  player.pause();
+  player.currentTime = 0;
 }
 
 window.MillionaireAudio = {
@@ -240,6 +255,7 @@ function renderQuestion() {
   updateHintButtons();
   updateMoneyLadder();
   playSound("questionShown");
+  playSound("thinking");
 }
 
 function disableAllAnswers() {
@@ -258,6 +274,7 @@ function finishGame(text, finalAmount) {
   ui.takeMoneyBtn.disabled = true;
   ui.setupControls?.classList.remove("hidden");
   ui.gameCard?.classList.remove("game-active");
+  stopSound("thinking");
   updateHintButtons();
   updateMoneyLadder();
 }
@@ -271,6 +288,7 @@ function handleAnswer(selectedIdx) {
   const current = questions[state.currentIndex];
   const answerButtons = Array.from(ui.answers.querySelectorAll(".answer-btn"));
   disableAllAnswers();
+  stopSound("thinking");
   playSound("answerSelected");
 
   answerButtons.forEach((btn) => {
@@ -326,6 +344,7 @@ function takeMoney() {
   if (!state.started || state.gameOver) {
     return;
   }
+  stopSound("thinking");
   playSound("takeMoney");
   const won = currentMoneyLevels[state.currentIndex - 1] || 0;
   finishGame("Вы решили забрать деньги.", won);

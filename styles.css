@@ -44,14 +44,14 @@ body {
 .layout {
   margin-top: 22px;
   display: grid;
-  grid-template-columns: minmax(340px, 430px) 1fr;
+  grid-template-columns: minmax(240px, 260px) 1fr;
   gap: 24px;
   min-height: calc(100vh - 170px);
 }
 
 .money-ladder,
 .game-card {
-  background: rgba(20, 28, 61, 0.88);
+  background: rgba(20, 28, 61, 0.5);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 18px;
   padding: 22px;
