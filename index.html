@@ -10,7 +10,7 @@
   <main class="app">
     <header class="header">
       <h1>Кто хочет стать миллионером</h1>
-      <p class="subtitle">Ответьте на 15 вопросов и выиграйте 1 000 000 ₽</p>
+      <p class="subtitle">Ответьте на 3 вопроса и выиграйте 1 000 000 ₽</p>
     </header>
 
     <section class="layout">
@@ -25,11 +25,12 @@
           <button id="take-money-btn" class="secondary" disabled>Забрать деньги</button>
         </div>
 
-        <div id="question-box" class="question-box">
-          <p id="question-text">Готовы проверить знания?</p>
+        <div class="game-main">
+          <div id="question-box" class="question-box">
+            <p id="question-text">Готовы проверить знания?</p>
+          </div>
+          <div id="answers" class="answers-grid"></div>
         </div>
-
-        <div id="answers" class="answers-grid"></div>
 
         <div class="hints">
           <button id="hint-5050" class="hint-btn">50:50</button>
@@ -38,17 +39,17 @@
         </div>
 
         <div id="hint-result" class="hint-result" aria-live="polite"></div>
-        <label for="question-pack" class="pack-label">Пакет вопросов</label>
-        <select id="question-pack" class="pack-select" aria-label="Выбор пакета вопросов">
-          <option value="pack1">Пакет 1 (3 вопроса)</option>
-          <option value="pack2">Пакет 2 (3 вопроса)</option>
-          <option value="pack3">Пакет 3 (3 вопроса)</option>
-          <option value="pack4">Пакет 4 (3 вопроса)</option>
-        </select>
-        <button id="start-btn" class="primary">Начать игру</button>
-        <button id="ready-start-btn" class="ready-signal-btn" type="button">
-          Все готовы — начинаем
-        </button>
+        <div id="setup-controls" class="setup-controls">
+          <label for="question-pack" class="pack-label">Пакет</label>
+          <select id="question-pack" class="pack-select" aria-label="Выбор пакета вопросов">
+            <option value="pack1">Пакет 1</option>
+            <option value="pack2">Пакет 2</option>
+            <option value="pack3">Пакет 3</option>
+            <option value="pack4">Пакет 4</option>
+          </select>
+          <button id="start-btn" class="primary setup-btn">Начать игру</button>
+          <button id="ready-start-btn" class="ready-signal-btn setup-btn" type="button">Все готовы</button>
+        </div>
       </section>
     </section>
   </main>

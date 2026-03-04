@@ -94,7 +94,9 @@ const ui = {
   startBtn: document.getElementById("start-btn"),
   takeMoneyBtn: document.getElementById("take-money-btn"),
   readyStartBtn: document.getElementById("ready-start-btn"),
-  packSelect: document.getElementById("question-pack")
+  packSelect: document.getElementById("question-pack"),
+  setupControls: document.getElementById("setup-controls"),
+  gameCard: document.querySelector(".game-card")
 };
 
 const state = {
@@ -254,6 +256,8 @@ function finishGame(text, finalAmount) {
   ui.statusText.textContent = `${text} Итог: ${formatMoney(finalAmount)}`;
   ui.questionText.textContent = "Нажмите «Начать игру», чтобы сыграть снова.";
   ui.takeMoneyBtn.disabled = true;
+  ui.setupControls?.classList.remove("hidden");
+  ui.gameCard?.classList.remove("game-active");
   updateHintButtons();
   updateMoneyLadder();
 }
@@ -426,6 +430,8 @@ function startGame() {
   state.usedCall = false;
   state.answerLocked = false;
   resetHintOutput();
+  ui.setupControls?.classList.add("hidden");
+  ui.gameCard?.classList.add("game-active");
   playSound("gameStart");
   renderQuestion();
 }
