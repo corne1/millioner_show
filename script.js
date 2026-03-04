@@ -1,107 +1,86 @@
-const moneyLevels = [
-  100,
-  200,
-  300,
-  500,
-  1000,
-  2000,
-  4000,
-  8000,
-  16000,
-  32000,
-  64000,
-  125000,
-  250000,
-  500000,
-  1000000
-];
-
-const safeIndexes = [4, 9];
 const ANSWER_REVEAL_DELAY_MS = 3000;
 const POST_REVEAL_DELAY_MS = 1200;
 
-const questions = [
-  {
-    question: "Как называется столица Франции?",
-    answers: ["Берлин", "Париж", "Мадрид", "Рим"],
-    correct: 1
-  },
-  {
-    question: "Сколько дней в високосном году?",
-    answers: ["365", "366", "364", "360"],
-    correct: 1
-  },
-  {
-    question: "Какой язык работает в браузере на стороне клиента?",
-    answers: ["Python", "Java", "C#", "JavaScript"],
-    correct: 3
-  },
-  {
-    question: "Какой океан самый большой?",
-    answers: ["Индийский", "Атлантический", "Тихий", "Северный Ледовитый"],
-    correct: 2
-  },
-  {
-    question: "Что обозначает HTML?",
-    answers: [
-      "HyperText Markup Language",
-      "HighText Machine Language",
-      "Hyper Transfer Main Link",
-      "Home Tool Markup Language"
-    ],
-    correct: 0
-  },
-  {
-    question: "Кто написал роман «1984»?",
-    answers: ["Джордж Оруэлл", "Олдос Хаксли", "Рэй Брэдбери", "Эрнест Хемингуэй"],
-    correct: 0
-  },
-  {
-    question: "Какой элемент имеет химический символ O?",
-    answers: ["Золото", "Кислород", "Серебро", "Олово"],
-    correct: 1
-  },
-  {
-    question: "Как называется процесс поиска и исправления ошибок в коде?",
-    answers: ["Рефакторинг", "Компиляция", "Дебаггинг", "Деплой"],
-    correct: 2
-  },
-  {
-    question: "Какое минимальное значение может вернуть Math.random() в JavaScript?",
-    answers: ["0 включительно", "1 включительно", "-1 включительно", "Зависит от браузера"],
-    correct: 0
-  },
-  {
-    question: "Какая планета находится ближе всего к Солнцу?",
-    answers: ["Марс", "Венера", "Меркурий", "Юпитер"],
-    correct: 2
-  },
-  {
-    question: "В какой системе счисления работают компьютеры на уровне битов?",
-    answers: ["Десятичной", "Восьмеричной", "Шестнадцатеричной", "Двоичной"],
-    correct: 3
-  },
-  {
-    question: "Что из перечисленного является алгоритмом сортировки?",
-    answers: ["BFS", "Dijkstra", "Quick Sort", "RSA"],
-    correct: 2
-  },
-  {
-    question: "Какой протокол обычно используется для защищенного веб-соединения?",
-    answers: ["HTTP", "FTP", "HTTPS", "SMTP"],
-    correct: 2
-  },
-  {
-    question: "Сколько континентов обычно выделяют на Земле в школьной географии?",
-    answers: ["5", "6", "7", "8"],
-    correct: 2
-  },
-  {
-    question: "Как называется структура данных с принципом LIFO?",
-    answers: ["Очередь", "Стек", "Дерево", "Граф"],
-    correct: 1
-  }
+const QUESTIONS_PER_PACK = 3;
+const ROUND_MONEY_LEVELS = [100000, 500000, 1000000];
+let currentMoneyLevels = ROUND_MONEY_LEVELS.slice();
+let currentSafeIndexes = [0, 1, 2];
+
+function buildQuestion(question, answers, correctIndex) {
+  return { question, answers, correct: correctIndex };
+}
+
+const allQuestions = [
+  buildQuestion(
+    "Что, согласно народной мудрости, женщина может сделать из ничего?",
+    ["Салат, прическу и трагедию", "Котлеты, ремонт и карьеру", "Борщ, отчет и долги", "Генеральную уборку и депрессию"],
+    0
+  ),
+  buildQuestion(
+    "Какое кодовое слово использует женщина, когда купила пятое платье за месяц?",
+    ["«Это инвестиция»", "«Оно было по акции»", "«Я в нем буду на нашей свадьбе/юбилее»", "Все вышеперечисленное"],
+    3
+  ),
+  buildQuestion(
+    "Что такое «мицеллярная вода» в представлении большинства мужчин?",
+    ["Святая вода для очищения совести", "Просто вода, но в пять раз дороже", "Жидкость для розжига", "Напиток для детокса"],
+    1
+  ),
+  buildQuestion(
+    "Какое средство макияжа способно изменить лицо женщины до неузнаваемости (по мнению мужей, ждущих в машине)?",
+    ["Гигиеническая помада", "«Я только брови подкрашу»", "Крем для рук", "Патчи для глаз"],
+    1
+  ),
+  buildQuestion(
+    "Какое состояние женщины самое опасное для семейного бюджета?",
+    ["«Мне нечего надеть»", "«Я просто посмотрю»", "«Смотри, какая милая вазочка»", "«У меня плохое настроение»"],
+    3
+  ),
+  buildQuestion(
+    "Сколько на самом деле времени занимает фраза «Я буду готова через 5 минут» в переводе на «мужской» язык?",
+    ["300 секунд", "Время, за которое можно успеть посмотреть футбольный матч", "Вечность", "Зависит от сложности прически"],
+    2
+  ),
+  buildQuestion(
+    "Какой цветок считается неофициальным символом 8 Марта в России, хотя его ветки на самом деле — это серебристая акация?",
+    ["Роза", "Мимоза", "Ромашка", "Кактус"],
+    1
+  ),
+  buildQuestion(
+    "Что, согласно шутке, ищет женщина в своей сумочке дольше всего?",
+    ["Смысл жизни", "Паспорт", "Ключи или телефон", "Вторую такую же сумочку"],
+    2
+  ),
+  buildQuestion(
+    "Какое из этих слов НЕ является названием оттенка губной помады в каталогах косметики?",
+    ["Пыльная роза", "Спелая вишня", "Мокрый асфальт", "Розовый закат"],
+    2
+  ),
+  buildQuestion(
+    "Что такое «балетка» в женском понимании?",
+    ["Маленькая балерина", "Обувь на плоской подошве", "Диета на одних пачках", "Сумка для пуантов"],
+    1
+  ),
+  buildQuestion(
+    "Какая деталь гардероба получила свое название в честь атолла в Тихом океане, где проводились ядерные испытания?",
+    ["Шпильки", "Бикини", "Мини-юбка", "Корсет"],
+    1
+  ),
+  buildQuestion(
+    "Как называется процедура, которую женщины делают, чтобы ресницы выглядели длиннее, но при этом название звучит как «процесс консервации»?",
+    ["Маринование", "Ламинирование", "Копчение", "Тюнингование"],
+    1
+  )
 ];
+
+const questionPacks = {
+  pack1: [allQuestions[0], allQuestions[1], allQuestions[2]],
+  pack2: [allQuestions[3], allQuestions[4], allQuestions[5]],
+  pack3: [allQuestions[6], allQuestions[7], allQuestions[8]],
+  pack4: [allQuestions[9], allQuestions[10], allQuestions[11]]
+};
+
+let questions = questionPacks.pack1;
 
 const ui = {
   moneyList: document.getElementById("money-list"),
@@ -113,7 +92,9 @@ const ui = {
   hintAudience: document.getElementById("hint-audience"),
   hintCall: document.getElementById("hint-call"),
   startBtn: document.getElementById("start-btn"),
-  takeMoneyBtn: document.getElementById("take-money-btn")
+  takeMoneyBtn: document.getElementById("take-money-btn"),
+  readyStartBtn: document.getElementById("ready-start-btn"),
+  packSelect: document.getElementById("question-pack")
 };
 
 const state = {
@@ -134,14 +115,19 @@ const audioMap = {
   answerCorrect: "audio/answer-correct.mp3",
   answerWrong: "audio/answer-wrong.mp3",
   takeMoney: "audio/take-money.mp3",
-  hint5050: "audio/hint-5050.mp3",
+  hint5050: "audio/khsm_50-50.mp3",
   hintAudience: "audio/hint-audience.mp3",
   hintCall: "audio/hint-call.mp3",
   gameWin: "audio/game-win.mp3",
-  gameLose: "audio/game-lose.mp3"
+  gameLose: "audio/answer-wrong.mp3",
+  readyStart: "audio/hello-new-punter-2008-long.mp3"
 };
 
 const audioPlayers = {};
+const audioStopTimers = {};
+const audioStopAfterMs = {
+  gameStart: 4000
+};
 
 function playSound(eventName) {
   const src = audioMap[eventName];
@@ -155,10 +141,19 @@ function playSound(eventName) {
   }
 
   const player = audioPlayers[eventName];
+  clearTimeout(audioStopTimers[eventName]);
   player.currentTime = 0;
   player.play().catch(() => {
     // Ignore playback errors if file is absent or autoplay is blocked.
   });
+
+  const stopAfterMs = audioStopAfterMs[eventName];
+  if (typeof stopAfterMs === "number" && stopAfterMs > 0) {
+    audioStopTimers[eventName] = setTimeout(() => {
+      player.pause();
+      player.currentTime = 0;
+    }, stopAfterMs);
+  }
 }
 
 window.MillionaireAudio = {
@@ -177,15 +172,15 @@ function formatMoney(value) {
 
 function buildMoneyLadder() {
   ui.moneyList.innerHTML = "";
-  moneyLevels
+  currentMoneyLevels
     .slice()
     .reverse()
     .forEach((amount, reverseIndex) => {
-      const originalIndex = moneyLevels.length - 1 - reverseIndex;
+      const originalIndex = currentMoneyLevels.length - 1 - reverseIndex;
       const li = document.createElement("li");
       li.textContent = `${originalIndex + 1}. ${formatMoney(amount)}`;
       li.dataset.index = String(originalIndex);
-      if (safeIndexes.includes(originalIndex)) {
+      if (currentSafeIndexes.includes(originalIndex)) {
         li.classList.add("safe");
       }
       ui.moneyList.appendChild(li);
@@ -224,17 +219,20 @@ function renderQuestion() {
   const marks = ["A", "B", "C", "D"];
 
   current.answers.forEach((answer, idx) => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "answer-btn-wrapper";
     const btn = document.createElement("button");
     btn.className = "answer-btn";
     btn.type = "button";
     btn.dataset.idx = String(idx);
     btn.textContent = `${marks[idx]}: ${answer}`;
     btn.addEventListener("click", () => handleAnswer(idx));
-    ui.answers.appendChild(btn);
+    wrapper.appendChild(btn);
+    ui.answers.appendChild(wrapper);
   });
 
   ui.statusText.textContent = `Вопрос ${state.currentIndex + 1} на ${formatMoney(
-    moneyLevels[state.currentIndex]
+    currentMoneyLevels[state.currentIndex]
   )}`;
   ui.takeMoneyBtn.disabled = state.currentIndex === 0;
   updateHintButtons();
@@ -274,7 +272,6 @@ function handleAnswer(selectedIdx) {
   answerButtons.forEach((btn) => {
     const idx = Number(btn.dataset.idx);
     if (idx === selectedIdx) {
-      btn.style.borderColor = "var(--accent)";
       btn.style.opacity = "1";
     }
   });
@@ -283,38 +280,41 @@ function handleAnswer(selectedIdx) {
 
   setTimeout(() => {
     answerButtons.forEach((btn) => {
+      const wrapper = btn.closest(".answer-btn-wrapper");
       const idx = Number(btn.dataset.idx);
       if (idx === current.correct) {
         btn.classList.add("correct");
+        wrapper?.classList.add("correct");
       }
       if (idx === selectedIdx && selectedIdx !== current.correct) {
         btn.classList.add("wrong");
+        wrapper?.classList.add("wrong");
       }
     });
 
     if (selectedIdx === current.correct) {
       playSound("answerCorrect");
-      if (safeIndexes.includes(state.currentIndex)) {
-        state.guaranteed = moneyLevels[state.currentIndex];
+      if (currentSafeIndexes.includes(state.currentIndex)) {
+        state.guaranteed = currentMoneyLevels[state.currentIndex];
       }
-
-      setTimeout(() => {
-        state.currentIndex += 1;
-        if (state.currentIndex >= questions.length) {
-          playSound("gameWin");
-          finishGame("Победа! Вы ответили на все вопросы.", moneyLevels[moneyLevels.length - 1]);
-          return;
-        }
-        resetHintOutput();
-        renderQuestion();
-      }, POST_REVEAL_DELAY_MS);
     } else {
-      playSound("answerWrong");
-      setTimeout(() => {
-        playSound("gameLose");
-        finishGame("Неверный ответ.", state.guaranteed);
-      }, POST_REVEAL_DELAY_MS);
+      playSound("gameLose");
     }
+
+    setTimeout(() => {
+      state.currentIndex += 1;
+      if (state.currentIndex >= questions.length) {
+        playSound("gameWin");
+        const isWin = selectedIdx === current.correct;
+        finishGame(
+          isWin ? "Победа! Вы ответили на все вопросы." : "Раунд завершён.",
+          isWin ? currentMoneyLevels[currentMoneyLevels.length - 1] : state.guaranteed
+        );
+        return;
+      }
+      resetHintOutput();
+      renderQuestion();
+    }, POST_REVEAL_DELAY_MS);
   }, ANSWER_REVEAL_DELAY_MS);
 }
 
@@ -323,7 +323,7 @@ function takeMoney() {
     return;
   }
   playSound("takeMoney");
-  const won = moneyLevels[state.currentIndex - 1] || 0;
+  const won = currentMoneyLevels[state.currentIndex - 1] || 0;
   finishGame("Вы решили забрать деньги.", won);
 }
 
@@ -410,6 +410,13 @@ function useHintCall() {
 }
 
 function startGame() {
+  const packKey = ui.packSelect?.value || "pack1";
+  if (questionPacks[packKey]) {
+    questions = questionPacks[packKey];
+  }
+  currentMoneyLevels = ROUND_MONEY_LEVELS.slice(0, questions.length);
+  currentSafeIndexes = currentMoneyLevels.map((_, i) => i);
+  buildMoneyLadder();
   state.started = true;
   state.gameOver = false;
   state.currentIndex = 0;
@@ -428,6 +435,7 @@ ui.takeMoneyBtn.addEventListener("click", takeMoney);
 ui.hint5050.addEventListener("click", useHint5050);
 ui.hintAudience.addEventListener("click", useHintAudience);
 ui.hintCall.addEventListener("click", useHintCall);
+ui.readyStartBtn?.addEventListener("click", () => playSound("readyStart"));
 
 buildMoneyLadder();
 updateHintButtons();
