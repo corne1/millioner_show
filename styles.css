@@ -13,6 +13,7 @@
   box-sizing: border-box;
 }
 
+html,
 body {
   margin: 0;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
@@ -20,7 +21,9 @@ body {
     linear-gradient(rgba(6, 10, 26, 0.1), rgba(6, 10, 26, 0.1)),
     url("background.jpg") center / cover no-repeat fixed;
   color: var(--text);
+  height: 100%;
   min-height: 100vh;
+  overflow: hidden;
 }
 
 .app {
@@ -163,11 +166,11 @@ body {
   position: relative;
   padding: clamp(20px, 3vw, 40px) clamp(18px, 2.5vw, 36px);
   margin-bottom: 20px;
-  clip-path: polygon(8% 0, 92% 0, 100% 50%, 92% 100%, 8% 100%, 0 50%);
   background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
+  height: auto;
 }
 
 .question-box::before {
@@ -196,6 +199,10 @@ body {
   font-size: clamp(0.95rem, 3.8vw, 1.5rem);
   font-weight: 700;
   line-height: 1.4;
+  width: 100%;
+  text-align: center;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .answers-grid {
@@ -207,8 +214,8 @@ body {
 
 .answer-btn-wrapper {
   position: relative;
-  min-height: clamp(72px, 12vw, 100px);
-  clip-path: polygon(8% 0, 92% 0, 100% 50%, 92% 100%, 8% 100%, 0 50%);
+  height: auto;
+  padding: 2px;
 }
 
 .answer-btn-wrapper::before {
@@ -234,18 +241,22 @@ body {
 }
 
 .answer-btn {
-  position: absolute;
-  inset: 2px;
+  position: relative;
+  width: 100%;
+  height: 100%;
   background: #0f1942;
   border: none;
   color: var(--text);
   clip-path: polygon(8% 0, 92% 0, 100% 50%, 92% 100%, 8% 100%, 0 50%);
-  min-height: 0;
-  padding-left: clamp(40px, 6vw, 64px);
+  padding: 12px clamp(18px, 2.8vw, 28px) 12px clamp(40px, 6vw, 64px);
   text-align: left;
   cursor: pointer;
   font-size: clamp(0.85rem, 2.8vw, 1.4rem);
   font-weight: 700;
+  line-height: 1.35;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
   z-index: 1;
   transition: background-color 0.15s ease, transform 0.08s ease;
 }

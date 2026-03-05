@@ -229,6 +229,25 @@ function updateHintButtons() {
   ui.hintCall.classList.toggle("hint-disabled", state.usedCall || !state.started || state.gameOver);
 }
 
+function syncAnswerButtonHeights() {
+  const wrappers = Array.from(ui.answers.querySelectorAll(".answer-btn-wrapper"));
+  if (wrappers.length === 0) {
+    return;
+  }
+
+  wrappers.forEach((wrapper) => {
+    wrapper.style.height = "auto";
+  });
+
+  const maxHeight = Math.max(
+    ...wrappers.map((wrapper) => Math.ceil(wrapper.getBoundingClientRect().height))
+  );
+
+  wrappers.forEach((wrapper) => {
+    wrapper.style.height = `${maxHeight}px`;
+  });
+}
+
 function renderQuestion() {
   const current = questions[state.currentIndex];
   state.answerLocked = false;
@@ -253,6 +272,7 @@ function renderQuestion() {
     currentMoneyLevels[state.currentIndex]
   )}`;
   ui.takeMoneyBtn.disabled = state.currentIndex === 0;
+  requestAnimationFrame(syncAnswerButtonHeights);
   updateHintButtons();
   updateMoneyLadder();
   playSound("questionShown");
@@ -475,6 +495,7 @@ ui.hint5050.addEventListener("click", useHint5050);
 ui.hintAudience.addEventListener("click", useHintAudience);
 ui.hintCall.addEventListener("click", useHintCall);
 ui.readyStartBtn?.addEventListener("click", () => playSound("readyStart"));
+window.addEventListener("resize", syncAnswerButtonHeights);
 
 buildMoneyLadder();
 updateHintButtons();
