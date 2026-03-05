@@ -96,7 +96,8 @@ const ui = {
   readyStartBtn: document.getElementById("ready-start-btn"),
   packSelect: document.getElementById("question-pack"),
   setupControls: document.getElementById("setup-controls"),
-  gameCard: document.querySelector(".game-card")
+  gameCard: document.querySelector(".game-card"),
+  finalScreen: document.getElementById("final-screen")
 };
 
 const state = {
@@ -264,13 +265,24 @@ function disableAllAnswers() {
   });
 }
 
-function finishGame(text, finalAmount) {
+function setFinalScreenVisibility(isVisible) {
+  if (!ui.gameCard) {
+    return;
+  }
+  ui.gameCard.classList.toggle("show-final-screen", isVisible);
+}
+
+function finishGame(text, finalAmount, options = {}) {
+  const { showFinalScreen = false } = options;
   state.gameOver = true;
   state.started = false;
   state.answerLocked = false;
   disableAllAnswers();
+  setFinalScreenVisibility(showFinalScreen);
   ui.statusText.textContent = `${text} Итог: ${formatMoney(finalAmount)}`;
-  ui.questionText.textContent = "Нажмите «Начать игру», чтобы сыграть снова.";
+  if (!showFinalScreen) {
+    ui.questionText.textContent = "Нажмите «Начать игру», чтобы сыграть снова.";
+  }
   ui.takeMoneyBtn.disabled = true;
   ui.setupControls?.classList.remove("hidden");
   ui.gameCard?.classList.remove("game-active");
@@ -330,7 +342,8 @@ function handleAnswer(selectedIdx) {
         const isWin = selectedIdx === current.correct;
         finishGame(
           isWin ? "Победа! Вы ответили на все вопросы." : "Раунд завершён.",
-          isWin ? currentMoneyLevels[currentMoneyLevels.length - 1] : state.guaranteed
+          isWin ? currentMoneyLevels[currentMoneyLevels.length - 1] : state.guaranteed,
+          { showFinalScreen: isWin }
         );
         return;
       }
@@ -448,6 +461,7 @@ function startGame() {
   state.usedAudience = false;
   state.usedCall = false;
   state.answerLocked = false;
+  setFinalScreenVisibility(false);
   resetHintOutput();
   ui.setupControls?.classList.add("hidden");
   ui.gameCard?.classList.add("game-active");
