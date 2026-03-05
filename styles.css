@@ -86,7 +86,6 @@ body {
 
 .final-screen-text {
   margin: 0;
-  font-size: clamp(1.25rem, 3.5vw, 2.4rem);
   font-weight: 700;
   color: #fff;
 }
@@ -320,6 +319,12 @@ button {
 .hint-btn {
   background: #27366e;
   color: #f0f4ff;
+}
+
+.next-question-btn {
+  width: 100%;
+  margin-bottom: 12px;
+  font-weight: 600;
 }
 
 .hint-result {

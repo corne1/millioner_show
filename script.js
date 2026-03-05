@@ -93,6 +93,7 @@ const ui = {
   hintCall: document.getElementById("hint-call"),
   startBtn: document.getElementById("start-btn"),
   takeMoneyBtn: document.getElementById("take-money-btn"),
+  nextQuestionBtn: document.getElementById("next-question-btn"),
   readyStartBtn: document.getElementById("ready-start-btn"),
   packSelect: document.getElementById("question-pack"),
   setupControls: document.getElementById("setup-controls"),
@@ -224,9 +225,17 @@ function resetHintOutput() {
 }
 
 function updateHintButtons() {
-  ui.hint5050.classList.toggle("hint-disabled", state.used5050 || !state.started || state.gameOver);
-  ui.hintAudience.classList.toggle("hint-disabled", state.usedAudience || !state.started || state.gameOver);
-  ui.hintCall.classList.toggle("hint-disabled", state.usedCall || !state.started || state.gameOver);
+  const hintsDisabled = !state.started || state.gameOver || state.answerLocked;
+  ui.hint5050.classList.toggle("hint-disabled", state.used5050 || hintsDisabled);
+  ui.hintAudience.classList.toggle("hint-disabled", state.usedAudience || hintsDisabled);
+  ui.hintCall.classList.toggle("hint-disabled", state.usedCall || hintsDisabled);
+}
+
+function setNextQuestionButtonVisibility(isVisible) {
+  if (!ui.nextQuestionBtn) {
+    return;
+  }
+  ui.nextQuestionBtn.hidden = !isVisible;
 }
 
 function syncAnswerButtonHeights() {
@@ -251,6 +260,7 @@ function syncAnswerButtonHeights() {
 function renderQuestion() {
   const current = questions[state.currentIndex];
   state.answerLocked = false;
+  setNextQuestionButtonVisibility(false);
   ui.questionText.textContent = current.question;
   ui.answers.innerHTML = "";
   const marks = ["A", "B", "C", "D"];
@@ -297,6 +307,7 @@ function finishGame(text, finalAmount, options = {}) {
   state.gameOver = true;
   state.started = false;
   state.answerLocked = false;
+  setNextQuestionButtonVisibility(false);
   disableAllAnswers();
   setFinalScreenVisibility(showFinalScreen);
   ui.statusText.textContent = `${text} Итог: ${formatMoney(finalAmount)}`;
@@ -319,6 +330,9 @@ function handleAnswer(selectedIdx) {
   state.answerLocked = true;
   const current = questions[state.currentIndex];
   const answerButtons = Array.from(ui.answers.querySelectorAll(".answer-btn"));
+  ui.takeMoneyBtn.disabled = true;
+  setNextQuestionButtonVisibility(false);
+  updateHintButtons();
   disableAllAnswers();
   stopSound("thinking");
   playSound("answerSelected");
@@ -356,21 +370,37 @@ function handleAnswer(selectedIdx) {
     }
 
     setTimeout(() => {
-      state.currentIndex += 1;
-      if (state.currentIndex >= questions.length) {
+      if (selectedIdx !== current.correct) {
+        finishGame("Неверный ответ.", state.guaranteed);
+        return;
+      }
+
+      const isLastQuestion = state.currentIndex === questions.length - 1;
+      if (isLastQuestion) {
         playSound("gameWin");
-        const isWin = selectedIdx === current.correct;
         finishGame(
-          isWin ? "Победа! Вы ответили на все вопросы." : "Раунд завершён.",
-          isWin ? currentMoneyLevels[currentMoneyLevels.length - 1] : state.guaranteed,
-          { showFinalScreen: isWin }
+          "Победа! Вы ответили на все вопросы.",
+          currentMoneyLevels[currentMoneyLevels.length - 1],
+          { showFinalScreen: true }
         );
         return;
       }
-      resetHintOutput();
-      renderQuestion();
+
+      ui.statusText.textContent = "Ответ верный. Нажмите «Следующий вопрос».";
+      setNextQuestionButtonVisibility(true);
+      state.answerLocked = true;
+      updateHintButtons();
     }, POST_REVEAL_DELAY_MS);
   }, ANSWER_REVEAL_DELAY_MS);
+}
+
+function goToNextQuestion() {
+  if (!state.started || state.gameOver || !state.answerLocked || ui.nextQuestionBtn?.hidden) {
+    return;
+  }
+  state.currentIndex += 1;
+  resetHintOutput();
+  renderQuestion();
 }
 
 function takeMoney() {
@@ -481,6 +511,7 @@ function startGame() {
   state.usedAudience = false;
   state.usedCall = false;
   state.answerLocked = false;
+  setNextQuestionButtonVisibility(false);
   setFinalScreenVisibility(false);
   resetHintOutput();
   ui.setupControls?.classList.add("hidden");
@@ -491,6 +522,7 @@ function startGame() {
 
 ui.startBtn.addEventListener("click", startGame);
 ui.takeMoneyBtn.addEventListener("click", takeMoney);
+ui.nextQuestionBtn?.addEventListener("click", goToNextQuestion);
 ui.hint5050.addEventListener("click", useHint5050);
 ui.hintAudience.addEventListener("click", useHintAudience);
 ui.hintCall.addEventListener("click", useHintCall);
