@@ -15,8 +15,15 @@
 
     <section class="layout">
       <aside class="money-ladder" aria-label="Таблица выигрышей">
-        <h2>Несгораемая сумма</h2>
-        <ol id="money-list"></ol>
+        <div>
+          <h2>Несгораемая сумма</h2>
+          <ol id="money-list"></ol>
+        </div>
+        <div class="hints">
+          <button id="hint-5050" class="hint-btn">50:50</button>
+          <button id="hint-audience" class="hint-btn">Помощь зала</button>
+          <button id="hint-call" class="hint-btn">Звонок другу</button>
+        </div>
       </aside>
 
       <section class="game-card">
@@ -35,11 +42,6 @@
           </div>
         </div>
 
-        <div class="hints">
-          <button id="hint-5050" class="hint-btn">50:50</button>
-          <button id="hint-audience" class="hint-btn">Помощь зала</button>
-          <button id="hint-call" class="hint-btn">Звонок другу</button>
-        </div>
         <button id="next-question-btn" class="secondary next-question-btn" type="button" hidden>Следующий вопрос</button>
 
         <div id="hint-result" class="hint-result" aria-live="polite"></div>
