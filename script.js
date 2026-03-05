@@ -370,23 +370,21 @@ function handleAnswer(selectedIdx) {
     }
 
     setTimeout(() => {
-      if (selectedIdx !== current.correct) {
-        finishGame("Неверный ответ.", state.guaranteed);
-        return;
-      }
-
       const isLastQuestion = state.currentIndex === questions.length - 1;
       if (isLastQuestion) {
         playSound("gameWin");
         finishGame(
-          "Победа! Вы ответили на все вопросы.",
+          "Игра завершена.",
           currentMoneyLevels[currentMoneyLevels.length - 1],
           { showFinalScreen: true }
         );
         return;
       }
 
-      ui.statusText.textContent = "Ответ верный. Нажмите «Следующий вопрос».";
+      ui.statusText.textContent =
+        selectedIdx === current.correct
+          ? "Ответ верный. Нажмите «Следующий вопрос»."
+          : "Ответ неверный. Нажмите «Следующий вопрос».";
       setNextQuestionButtonVisibility(true);
       state.answerLocked = true;
       updateHintButtons();
